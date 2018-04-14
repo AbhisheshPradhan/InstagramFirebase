@@ -1,3 +1,3 @@
 # InstagramFirebase
 
-InstagramFirebase Tutorial from https://www.letsbuildthatapp.com
+InstagramFirebase Course from https://www.letsbuildthatapp.com
