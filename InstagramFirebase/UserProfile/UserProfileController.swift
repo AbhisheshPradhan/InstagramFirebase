@@ -2,8 +2,8 @@
 //  UserProfileController.swift
 //  InstagramFirebase
 //
-//  Created by Brian Voong on 3/22/17.
-//  Copyright © 2017 Lets Build That App. All rights reserved.
+//  Created by Abhishesh Pradhan on 12/4/18.
+//  Copyright © 2018 Abhishesh Pradhan. All rights reserved.
 //
 
 import UIKit
@@ -13,13 +13,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         collectionView?.backgroundColor = .white
-        
         navigationItem.title = Auth.auth().currentUser?.uid
-        
         fetchUser()
-        
         collectionView?.register(UserProfileHeader.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "headerId")
     }
     
@@ -43,15 +39,11 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            print(snapshot.value ?? "")
-            
+           // print(snapshot.value ?? "")
             guard let dictionary = snapshot.value as? [String: Any] else { return }
-            
             self.user = User(dictionary: dictionary)
             self.navigationItem.title = self.user?.username
-            
             self.collectionView?.reloadData()
-            
         }) { (err) in
             print("Failed to fetch user:", err)
         }
