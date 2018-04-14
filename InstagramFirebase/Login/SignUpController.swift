@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
+class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
 {
     
     let plusPhotoButton: UIButton = {
@@ -151,16 +151,33 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                             return
                         }
                         print("Successfully saved user info into Database")
+                        
+                        guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+                        mainTabBarController.setupViewControllers()
+                        self.dismiss(animated: true, completion: nil)
+                        
                     })
             })
         }
     }
     
+    let alreadyHaveAccountButton : UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString(string: "Already have an account?", attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14), NSAttributedStringKey.foregroundColor: UIColor.lightGray])
+        attributedTitle.append(NSAttributedString(string: "Sign In", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedStringKey.foregroundColor: UIColor.rgb(red: 17, green: 154, blue: 237) ]))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+        button.addTarget(self, action: #selector(handleShowLogin), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc func handleShowLogin() {
+        navigationController?.popToRootViewController(animated: true)
+    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .white
         view.addSubview(plusPhotoButton)
         
         //Pragmatically positioning the plusPhotoButton
@@ -170,7 +187,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         plusPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         setupInputFields()
-        
+        view.addSubview(alreadyHaveAccountButton)
+        alreadyHaveAccountButton.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor,  height: 50)
     }
     
     
