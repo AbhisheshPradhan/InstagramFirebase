@@ -8,13 +8,21 @@
 
 import UIKit
 
+var imageCache = [String: UIImage]()
+
 class CustomImageView: UIImageView {
     
     var lastURLUsedToLoadImage: String?
     
     func loadImage(urlString: String){
-        
         lastURLUsedToLoadImage = urlString
+        
+        //if the image is already is in the cache, just return that image from the cache instead of fetching again
+        if let cachedImage = imageCache[urlString] {
+            self.image = cachedImage
+            return
+        }
+        
         guard let url = URL(string: urlString) else { return }
         URLSession.shared.dataTask(with: url) { (data, response, err) in
             if let err = err {
@@ -30,6 +38,10 @@ class CustomImageView: UIImageView {
             
             guard let imageData = data else { return }
             let photoImage = UIImage(data: imageData)
+            
+            
+            //cache the images into the image cache..save data..reduce unnecessary fetching of data again
+            imageCache[url.absoluteString] = photoImage
             
             DispatchQueue.main.async {
                 self.image = photoImage
