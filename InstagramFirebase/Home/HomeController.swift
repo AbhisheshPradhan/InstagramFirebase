@@ -15,11 +15,54 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func viewDidLoad()  {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateFeed), name: SharePhotoController.updateFeedNotificationName, object: nil)
+        
         collectionView?.backgroundColor = .white
         
         collectionView?.register(HomePostCell.self, forCellWithReuseIdentifier: cellId)
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView?.refreshControl = refreshControl
+        
         setupNavigationItems()
+        fetchAll()
+    }
+    
+    @objc func handleUpdateFeed(){
+        handleRefresh()
+    }
+    
+    fileprivate func fetchAll(){
         fetchPosts()
+        fetchFollowingUserIds()
+    }
+    
+    //removes all posts of unfollowed users and gets posts of newly followed user
+    @objc func handleRefresh() {
+        posts.removeAll()
+        collectionView?.reloadData()
+        fetchAll()
+    }
+    
+    
+    
+    
+    fileprivate func fetchFollowingUserIds(){
+        //get the ids of following users of the logged in user
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
+            userIdsDictionary.forEach({ (key,value) in   //iterate through each following user
+                Database.fetchUserWithUID(uid: key, completion: { (user) in  //we then get all the users where key is the uid of the user
+                    self.fetchPostsWithUser(user: user) //then fetch the post of that user
+                })
+            })
+        }) { (err) in
+            print("Failed to fetch following user ids:", err)
+        }
     }
     
     func setupNavigationItems(){
@@ -42,37 +85,47 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomePostCell
+        if indexPath.item < posts.count {
+            cell.post = posts[indexPath.item]
+        }
         cell.post = posts[indexPath.item]
         return cell
     }
     
     var posts = [Post]()
-
+    
     fileprivate func fetchPosts(){
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        
         Database.fetchUserWithUID(uid: uid) {(user) in
             self.fetchPostsWithUser(user: user)
         }
     }
     
     
-    fileprivate func fetchPostsWithUser(user: User){
-        
-      //  guard let uid = Auth.auth().currentUser?.uid else { return }
+    fileprivate func fetchPostsWithUser(user: User) {
         let ref = Database.database().reference().child("posts").child(user.uid)
-        
-        //does ordering as well
-        ref.queryOrdered(byChild: "creationDate").observe(.childAdded, with: { (snapshot) in
-            //         print(snapshot.key, snapshot.value)
-            guard let dictionary = snapshot.value as? [String: Any] else { return }
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
             
-            let post = Post(user: user, dictionary: dictionary)
-            self.posts.insert(post, at: 0)
+            self.collectionView?.refreshControl?.endRefreshing()
+            
+            guard let dictionaries = snapshot.value as? [String: Any] else { return }
+            
+            dictionaries.forEach({ (key, value) in
+                guard let dictionary = value as? [String: Any] else { return }
+                
+                let post = Post(user: user, dictionary: dictionary)
+                
+                self.posts.append(post)
+            })
+            self.posts.sort(by: { (p1, p2) -> Bool in
+                return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+            })
             
             self.collectionView?.reloadData()
+            
+            
         }) { (err) in
-            print("Failed to fetch ordered posts", err)
+            print("Failed to fetch posts:", err)
         }
     }
 }

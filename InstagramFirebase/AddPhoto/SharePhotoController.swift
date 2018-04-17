@@ -86,6 +86,10 @@ class SharePhotoController: UIViewController
         }
     }
     
+    
+    //static = allows to be called outside from class..make it global value..
+    static let updateFeedNotificationName = NSNotification.Name(rawValue: "UpdateFeed")
+    
     //save the imageurl, caption, etc in the database
     fileprivate func saveToDatabaseWithImageUrl(imageUrl: String){
         guard let postImage = selectedImage else { return }
@@ -111,6 +115,9 @@ class SharePhotoController: UIViewController
             
             //after success, dismiss the scene
             self.dismiss(animated: true, completion: nil)
+            
+            
+            NotificationCenter.default.post(name: SharePhotoController.updateFeedNotificationName, object: nil)
         }
     }
     

@@ -17,6 +17,8 @@ class CustomImageView: UIImageView {
     func loadImage(urlString: String){
         lastURLUsedToLoadImage = urlString
         
+        self.image = nil
+        
         //if the image is already is in the cache, just return that image from the cache instead of fetching again
         if let cachedImage = imageCache[urlString] {
             self.image = cachedImage
