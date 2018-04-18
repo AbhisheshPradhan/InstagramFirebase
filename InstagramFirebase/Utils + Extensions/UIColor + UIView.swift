@@ -32,7 +32,7 @@ extension UIView {
             leftAnchor.constraint(equalTo: left, constant: paddingLeft).isActive = true
         }
         
-        if let bottom  = bottom {
+        if let bottom = bottom {
             bottomAnchor.constraint(equalTo: bottom, constant: -paddingBot).isActive = true
         }
         

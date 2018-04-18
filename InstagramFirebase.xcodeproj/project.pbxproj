@@ -36,6 +36,9 @@
 		72C0636E207CBB4B0050037B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72C0636C207CBB4B0050037B /* Main.storyboard */; };
 		72C06370207CBB4E0050037B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72C0636F207CBB4E0050037B /* Assets.xcassets */; };
 		72C06373207CBB4E0050037B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72C06371207CBB4E0050037B /* LaunchScreen.storyboard */; };
+		72CAA2EA208725850066CA58 /* CommentsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CAA2E9208725850066CA58 /* CommentsController.swift */; };
+		72CAA2EF20878D4D0066CA58 /* CommentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CAA2EE20878D4D0066CA58 /* CommentsCell.swift */; };
+		72CAA2F1208790F00066CA58 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CAA2F0208790F00066CA58 /* Comment.swift */; };
 		775E4B235710A29F97B2F04C /* Pods_InstagramFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3290BE53AA3FD5A8B3F423A7 /* Pods_InstagramFirebase.framework */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +77,9 @@
 		72C0636F207CBB4E0050037B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72C06372207CBB4E0050037B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		72C06374207CBB4E0050037B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		72CAA2E9208725850066CA58 /* CommentsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsController.swift; sourceTree = "<group>"; };
+		72CAA2EE20878D4D0066CA58 /* CommentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsCell.swift; sourceTree = "<group>"; };
+		72CAA2F0208790F00066CA58 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +119,7 @@
 			children = (
 				729A837020836EF900C4D40E /* Post.swift */,
 				729A837B20849B2400C4D40E /* User.swift */,
+				72CAA2F0208790F00066CA58 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -122,6 +129,8 @@
 			children = (
 				729A83772083A92E00C4D40E /* HomeController.swift */,
 				729A83792083AADF00C4D40E /* HomePostCell.swift */,
+				72CAA2E9208725850066CA58 /* CommentsController.swift */,
+				72CAA2EE20878D4D0066CA58 /* CommentsCell.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -344,10 +353,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				729A83832084BC6E00C4D40E /* UserSearchCell.swift in Sources */,
+				72CAA2EF20878D4D0066CA58 /* CommentsCell.swift in Sources */,
 				729A837E2084A28B00C4D40E /* FirebaseUtils.swift in Sources */,
+				72CAA2F1208790F00066CA58 /* Comment.swift in Sources */,
 				729D157F2086235B00059E58 /* CustomAnimationDismisser.swift in Sources */,
 				729A836D208346BC00C4D40E /* SharePhotoController.swift in Sources */,
 				724D9C0C207DFA3400140A08 /* UIColor + UIView.swift in Sources */,
+				72CAA2EA208725850066CA58 /* CommentsController.swift in Sources */,
 				729A8369208330EF00C4D40E /* PhotoSelectorCell.swift in Sources */,
 				729A83752083753400C4D40E /* CustomImageView.swift in Sources */,
 				729D15792085FADE00059E58 /* CameraController.swift in Sources */,

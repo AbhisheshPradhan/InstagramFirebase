@@ -64,16 +64,27 @@ class CameraController: UIViewController, AVCapturePhotoCaptureDelegate, UIViewC
         dismissButton.anchor(top: view.topAnchor, right: view.rightAnchor, paddingTop: 12,  paddingRight: 12, width: 50, height: 50)
     }
     
-    @objc func handleCapturePhoto(){
-        print("Capturing photo")
+//    @objc func handleCapturePhoto(){
+//        print("Capturing photo")
+//
+//        #if (!arch(x86_64))
+//        guard let previewFormatType = settings.availablePreviewPhotoPixelFormatTypes.first else { return }
+//
+//        settings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: previewFormatType]
+//
+//        output.capturePhoto(with: settings, delegate: self)
+//        #endif
+//    }
+    @objc func handleCapturePhoto() {
+        print("Capturing photo...")
         
-        #if (!arch(x86_64))
+        let settings = AVCapturePhotoSettings()
+        
         guard let previewFormatType = settings.availablePreviewPhotoPixelFormatTypes.first else { return }
         
         settings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: previewFormatType]
         
         output.capturePhoto(with: settings, delegate: self)
-        #endif
     }
     
     func photoOutput(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {

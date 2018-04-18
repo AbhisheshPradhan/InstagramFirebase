@@ -21,9 +21,12 @@ extension Database{
             
             completion(user)
             
+            
             //       self.fetchPostsWithUser(user: user)
         }) { (err) in
             print("Failed to fetch user for posts:", err)
         }
     }
+    
+    
 }

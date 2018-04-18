@@ -60,6 +60,7 @@ class SharePhotoController: UIViewController
     //upload the selected image into the storage
     @objc func handleShare(){
         
+        textView.isEditable = false
         guard let image = selectedImage else { return }
         guard let uploadData = UIImageJPEGRepresentation(image, 0.5) else { return }
         
@@ -71,6 +72,7 @@ class SharePhotoController: UIViewController
             if let err = err {
                 //if error in uploading file, enable share button again
                 self.navigationItem.rightBarButtonItem?.isEnabled = true
+                self.textView.isEditable = true
                 print("Failed to upload post image:", err)
                 return
             }

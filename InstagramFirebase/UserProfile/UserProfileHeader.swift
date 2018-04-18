@@ -28,9 +28,9 @@ class UserProfileHeader: UICollectionViewCell {
         
         if currentLoggedInUserId == userId {
             //edit profile
+            editProfileFollowButton.isEnabled = false
         }
         else {
-            
             //check if following
             Database.database().reference().child("following").child(currentLoggedInUserId).child(userId).observeSingleEvent(of: .value, with: { (snapshot) in
                 

@@ -8,16 +8,21 @@
 
 import UIKit
 
+//Custom Delegate Definition
+protocol HomePostCellDelegate {
+    func didTapComment(post: Post)
+}
 
 class HomePostCell: UICollectionViewCell
 {
+    var delegate: HomePostCellDelegate?
     
     var post: Post? {
         didSet{
             guard let postImageUrl = post?.imageUrl else { return }
             photoImageView.loadImage(urlString: postImageUrl)
             
-         //   userNameLabel.text
+            //   userNameLabel.text
             userNameLabel.text = post?.user.username
             
             guard let profileImageUrl = post?.user.profileImageUrl else { return }
@@ -78,19 +83,27 @@ class HomePostCell: UICollectionViewCell
     
     let likeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "comment").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
         return button
     }()
     
-    let commentButton: UIButton = {
+    lazy var commentButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "send2").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "comment").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(handleComment), for: .touchUpInside)
         return button
     }()
+    
+    //Pressing the Comment button will execute the delegate method (didTapComment) which is implemented by HomeController
+    @objc func handleComment(){
+        print("Comment button pressed, fetching comment")
+        guard let post = post else { return }
+        delegate?.didTapComment(post: post)
+    }
     
     let sendButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "like_unselected").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "send2").withRenderingMode(.alwaysOriginal), for: .normal)
         
         return button
     }()
@@ -103,10 +116,7 @@ class HomePostCell: UICollectionViewCell
     
     let captionLabel: UILabel = {
         let label = UILabel()
-        
-    
-        
-   //     label.attributedText = attributedText
+        //     label.attributedText = attributedText
         label.numberOfLines = 0
         
         return label
@@ -127,9 +137,9 @@ class HomePostCell: UICollectionViewCell
         
         userNameLabel.anchor(top: topAnchor, left: userProfileImageView.rightAnchor, bottom: photoImageView.topAnchor, right: optionsButton.leftAnchor, paddingLeft: 8)
         
-        optionsButton.anchor(top: topAnchor,  bottom: photoImageView.topAnchor, right: photoImageView.rightAnchor, paddingRight: 8, width: 44)
+        optionsButton.anchor(top: topAnchor,  bottom: photoImageView.topAnchor, right: rightAnchor, paddingRight: 8, width: 44)
         
-        photoImageView.anchor(top: userProfileImageView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 8)
+        photoImageView.anchor(top: userProfileImageView.bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 8)
         photoImageView.heightAnchor.constraint(equalTo: widthAnchor, multiplier: 1 ).isActive = true
         
         setupActionButtons()
@@ -145,7 +155,7 @@ class HomePostCell: UICollectionViewCell
         stackView.anchor(top: photoImageView.bottomAnchor, left: leftAnchor, paddingLeft: 4, width: 120, height: 50)
         
         addSubview(bookmarkButton)
-        bookmarkButton.anchor(top: photoImageView.bottomAnchor, right: rightAnchor, width: 40, height: 50)
+        bookmarkButton.anchor(top: photoImageView.bottomAnchor, right: rightAnchor, width: 40, height: 45)
     }
     
     required init?(coder aDecoder: NSCoder) {

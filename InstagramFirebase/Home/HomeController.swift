@@ -9,8 +9,9 @@
 import UIKit
 import Firebase
 
-class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout
+class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, HomePostCellDelegate
 {
+
     let cellId = "cellId"
     
     override func viewDidLoad()  {
@@ -41,28 +42,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     //removes all posts of unfollowed users and gets posts of newly followed user
     @objc func handleRefresh() {
+        print("Handling refresh..")
         posts.removeAll()
         collectionView?.reloadData()
         fetchAll()
-    }
-    
-    
-    
-    
-    fileprivate func fetchFollowingUserIds(){
-        //get the ids of following users of the logged in user
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-            
-            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
-            userIdsDictionary.forEach({ (key,value) in   //iterate through each following user
-                Database.fetchUserWithUID(uid: key, completion: { (user) in  //we then get all the users where key is the uid of the user
-                    self.fetchPostsWithUser(user: user) //then fetch the post of that user
-                })
-            })
-        }) { (err) in
-            print("Failed to fetch following user ids:", err)
-        }
     }
     
     func setupNavigationItems(){
@@ -94,11 +77,39 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomePostCell
-        if indexPath.item < posts.count {
-            cell.post = posts[indexPath.item]
-        }
+//        if indexPath.item < posts.count {
+//            cell.post = posts[indexPath.item]
+//        }
+        
+        //mark yourself as the delegate
+        cell.delegate = self
+        
         cell.post = posts[indexPath.item]
         return cell
+    }
+
+    func didTapComment(post: Post) {
+        print("Message coming from HomeController")
+        print(post.caption)
+        let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        commentsController.post = post
+        navigationController?.pushViewController(commentsController, animated: true)
+    }
+    
+    fileprivate func fetchFollowingUserIds(){
+        //get the ids of following users of the logged in user
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Database.database().reference().child("following").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            guard let userIdsDictionary = snapshot.value as? [String: Any] else { return }
+            userIdsDictionary.forEach({ (key,value) in   //iterate through each following user
+                Database.fetchUserWithUID(uid: key, completion: { (user) in  //we then get all the users where key is the uid of the user
+                    self.fetchPostsWithUser(user: user) //then fetch the post of that user
+                })
+            })
+        }) { (err) in
+            print("Failed to fetch following user ids:", err)
+        }
     }
     
     var posts = [Post]()
@@ -109,7 +120,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             self.fetchPostsWithUser(user: user)
         }
     }
-    
     
     fileprivate func fetchPostsWithUser(user: User) {
         let ref = Database.database().reference().child("posts").child(user.uid)
@@ -122,7 +132,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             dictionaries.forEach({ (key, value) in
                 guard let dictionary = value as? [String: Any] else { return }
                 
-                let post = Post(user: user, dictionary: dictionary)
+                var post = Post(user: user, dictionary: dictionary)
+                post.id = key
                 
                 self.posts.append(post)
             })
@@ -131,7 +142,6 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
             })
             
             self.collectionView?.reloadData()
-            
             
         }) { (err) in
             print("Failed to fetch posts:", err)
