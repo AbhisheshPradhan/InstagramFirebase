@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7246B1C5207E08D600E5630D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7246B1C4207E08D600E5630D /* GoogleService-Info.plist */; };
 		724D9C0C207DFA3400140A08 /* UIColor + UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 724D9C0B207DFA3400140A08 /* UIColor + UIView.swift */; };
+		7253F5AD2088DB850035CB90 /* CommentInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7253F5AC2088DB850035CB90 /* CommentInputAccessoryView.swift */; };
+		7253F5AF2088E8FB0035CB90 /* CommentInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7253F5AE2088E8FB0035CB90 /* CommentInputTextView.swift */; };
 		727BB73B207F5DD3005DBEF8 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727BB73A207F5DD3005DBEF8 /* MainTabBarController.swift */; };
 		727BB73D207F5EBC005DBEF8 /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 727BB73C207F5EBC005DBEF8 /* UserProfileController.swift */; };
 		729A8369208330EF00C4D40E /* PhotoSelectorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 729A8368208330EF00C4D40E /* PhotoSelectorCell.swift */; };
@@ -48,6 +50,8 @@
 		6718DB1699F48FCA4ECA52D8 /* Pods-InstagramFirebase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramFirebase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-InstagramFirebase/Pods-InstagramFirebase.debug.xcconfig"; sourceTree = "<group>"; };
 		7246B1C4207E08D600E5630D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		724D9C0B207DFA3400140A08 /* UIColor + UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor + UIView.swift"; sourceTree = "<group>"; };
+		7253F5AC2088DB850035CB90 /* CommentInputAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputAccessoryView.swift; sourceTree = "<group>"; };
+		7253F5AE2088E8FB0035CB90 /* CommentInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputTextView.swift; sourceTree = "<group>"; };
 		727BB73A207F5DD3005DBEF8 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		727BB73C207F5EBC005DBEF8 /* UserProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
 		729A8368208330EF00C4D40E /* PhotoSelectorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSelectorCell.swift; sourceTree = "<group>"; };
@@ -131,6 +135,8 @@
 				729A83792083AADF00C4D40E /* HomePostCell.swift */,
 				72CAA2E9208725850066CA58 /* CommentsController.swift */,
 				72CAA2EE20878D4D0066CA58 /* CommentsCell.swift */,
+				7253F5AC2088DB850035CB90 /* CommentInputAccessoryView.swift */,
+				7253F5AE2088E8FB0035CB90 /* CommentInputTextView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -352,6 +358,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7253F5AF2088E8FB0035CB90 /* CommentInputTextView.swift in Sources */,
 				729A83832084BC6E00C4D40E /* UserSearchCell.swift in Sources */,
 				72CAA2EF20878D4D0066CA58 /* CommentsCell.swift in Sources */,
 				729A837E2084A28B00C4D40E /* FirebaseUtils.swift in Sources */,
@@ -373,6 +380,7 @@
 				729D157B20860C4600059E58 /* PreviewPhotoContainerView.swift in Sources */,
 				727BB73D207F5EBC005DBEF8 /* UserProfileController.swift in Sources */,
 				72C06369207CBB4A0050037B /* AppDelegate.swift in Sources */,
+				7253F5AD2088DB850035CB90 /* CommentInputAccessoryView.swift in Sources */,
 				72B281012081EB5B000EC2F4 /* LoginController.swift in Sources */,
 				729D15762085E41800059E58 /* Date.swift in Sources */,
 				729A837A2083AADF00C4D40E /* HomePostCell.swift in Sources */,

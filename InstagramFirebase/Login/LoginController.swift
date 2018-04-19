@@ -127,6 +127,8 @@ class LoginController: UIViewController
         
         setupInputFields()
         
+       self.hideKeyboardWhenTappedAround() 
+        
     }
     
     fileprivate func setupInputFields(){

@@ -189,6 +189,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         setupInputFields()
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor,  height: 50)
+        self.hideKeyboardWhenTappedAround()
     }
     
     

@@ -6,7 +6,6 @@
 //  Copyright © 2018 Abhishesh Pradhan. All rights reserved.
 //
 
-
 import UIKit
 import Firebase
 
@@ -52,25 +51,25 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         guard let uid = self.user?.uid else { return }
         let ref = Database.database().reference().child("posts").child(uid)
         
-        //start the post from bottom of the list..newest item first displayed
-        var query = ref.queryOrdered(byChild: "creationDate")
+        //        let value = "-Kh0B6AleC8OgIF-mZNT"
+        //        let query = ref.queryOrderedByKey().queryStarting(atValue: value).queryLimited(toFirst: 6)
+        
+        var query = ref.queryOrderedByKey()
         
         if posts.count > 0 {
-            let value = posts.last?.creationDate.timeIntervalSince1970
-            query = query.queryEnding(atValue: value)
+            let value = posts.last?.id
+            query = query.queryStarting(atValue: value)
         }
         
-        query.queryLimited(toLast: 4).observeSingleEvent(of: .value, with: { (snapshot) in
+        query.queryLimited(toFirst: 4).observeSingleEvent(of: .value, with: { (snapshot) in
             
             guard var allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
-            allObjects.reverse()
             
             if allObjects.count < 4 {
                 self.isFinishedPaging = true
-                print("Paginating finished")
             }
             
-            if self.posts.count > 0 && allObjects.count > 0{
+            if self.posts.count > 0 {
                 allObjects.removeFirst()
             }
             
@@ -99,27 +98,27 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         }
     }
     
-//    fileprivate func fetchOrderedPosts() {
-//        guard let uid = self.user?.uid else { return }
-//        let ref = Database.database().reference().child("posts").child(uid)
-//
-//        //perhaps later on we'll implement some pagination of data
-//        ref.queryOrdered(byChild: "creationDate").observe(.childAdded, with: { (snapshot) in
-//            guard let dictionary = snapshot.value as? [String: Any] else { return }
-//
-//            guard let user = self.user else { return }
-//
-//            let post = Post(user: user, dictionary: dictionary)
-//
-//            self.posts.insert(post, at: 0)
-//            //            self.posts.append(post)
-//
-//            self.collectionView?.reloadData()
-//
-//        }) { (err) in
-//            print("Failed to fetch ordered posts:", err)
-//        }
-//    }
+    fileprivate func fetchOrderedPosts() {
+        guard let uid = self.user?.uid else { return }
+        let ref = Database.database().reference().child("posts").child(uid)
+        
+        //perhaps later on we'll implement some pagination of data
+        ref.queryOrdered(byChild: "creationDate").observe(.childAdded, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            
+            guard let user = self.user else { return }
+            
+            let post = Post(user: user, dictionary: dictionary)
+            
+            self.posts.insert(post, at: 0)
+            //            self.posts.append(post)
+            
+            self.collectionView?.reloadData()
+            
+        }) { (err) in
+            print("Failed to fetch ordered posts:", err)
+        }
+    }
     
     fileprivate func setupLogOutButton() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "gear").withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(handleLogOut))
@@ -151,7 +150,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        user?.totalPosts = posts.count
         return posts.count
     }
     
@@ -231,6 +229,9 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         }
     }
 }
+
+
+
 
 
 
