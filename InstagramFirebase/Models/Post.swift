@@ -17,6 +17,8 @@ struct Post {
     let caption: String
     let creationDate: Date
     
+    var hasLiked = false
+    
     
     //casting the default value
     init(user: User, dictionary: [String : Any]){

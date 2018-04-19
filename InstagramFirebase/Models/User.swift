@@ -14,6 +14,7 @@ struct User {
     let uid: String
     let username: String
     let profileImageUrl: String
+    var totalPosts: Int?
     
     init(uid: String, dictionary: [String: Any]) {
         

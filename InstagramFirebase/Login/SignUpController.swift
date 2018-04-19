@@ -65,7 +65,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             passwordTextField.hasText
         
         if isFormValid{
-            signUpButton.backgroundColor = UIColor.rgb(red: 17, green: 154, blue: 237)
+            signUpButton.backgroundColor = .mainBlue()
             signUpButton.isEnabled = true
         }
         else {

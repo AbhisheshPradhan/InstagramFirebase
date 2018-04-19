@@ -11,7 +11,7 @@ import Firebase
 
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout, HomePostCellDelegate
 {
-
+    
     let cellId = "cellId"
     
     override func viewDidLoad()  {
@@ -77,23 +77,44 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! HomePostCell
-//        if indexPath.item < posts.count {
-//            cell.post = posts[indexPath.item]
-//        }
+        //        if indexPath.item < posts.count {
+        //            cell.post = posts[indexPath.item]
+        //        }
         
         //mark yourself as the delegate
         cell.delegate = self
-        
         cell.post = posts[indexPath.item]
         return cell
     }
-
+    
     func didTapComment(post: Post) {
         print("Message coming from HomeController")
         print(post.caption)
         let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
         commentsController.post = post
         navigationController?.pushViewController(commentsController, animated: true)
+    }
+    
+    func didLike(for cell: HomePostCell){
+        print("Handling like inside Controller")
+        guard let indexPath = collectionView?.indexPath(for: cell) else { return }
+        var post = self.posts[indexPath.item]
+        print("post caption : ", post.caption)
+        
+        guard let postId = post.id else{ return }
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let value = [uid: post.hasLiked == true ? 0 : 1 ]   //0 = unliked/not liked , 1 = liked
+        
+        //create new child path string in database
+        Database.database().reference().child("likes").child(postId).updateChildValues(value) { (err, _) in
+            //print("Failed to like post")
+            return
+        }
+        print("Successfully liked post")
+        post.hasLiked = !post.hasLiked  //turn the like button the opposite when tapped
+        self.posts[indexPath.item] = post   //catch the post that is liked
+        self.collectionView?.reloadItems(at: [indexPath])   //only update the cell we are liking
     }
     
     fileprivate func fetchFollowingUserIds(){
@@ -135,14 +156,25 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 var post = Post(user: user, dictionary: dictionary)
                 post.id = key
                 
-                self.posts.append(post)
+                guard let uid = Auth.auth().currentUser?.uid else { return }
+                
+                Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    print(snapshot)
+                    if let value = snapshot.value as? Int, value == 1{
+                        post.hasLiked = true
+                    }
+                    else{
+                        post.hasLiked = false
+                    }
+                    self.posts.append(post)
+                    self.posts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                    })
+                    self.collectionView?.reloadData()
+                }, withCancel: { (err) in
+                    print("Failed to fetch like info for post")
+                })
             })
-            self.posts.sort(by: { (p1, p2) -> Bool in
-                return p1.creationDate.compare(p2.creationDate) == .orderedDescending
-            })
-            
-            self.collectionView?.reloadData()
-            
         }) { (err) in
             print("Failed to fetch posts:", err)
         }

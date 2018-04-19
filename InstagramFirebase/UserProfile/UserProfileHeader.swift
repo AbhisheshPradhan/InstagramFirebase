@@ -9,16 +9,38 @@
 import UIKit
 import Firebase
 
+
+protocol UserProfileHeaderDelegate {
+    func didChangeToListView()
+    func didChangeToGridView()
+}
+
+
 class UserProfileHeader: UICollectionViewCell {
     
+    var delegate: UserProfileHeaderDelegate?
+    var total: Int = 0
     var user: User? {
         didSet {
             guard let profileImageUrl = user?.profileImageUrl else { return }
             
+            guard let totalPosts = user?.totalPosts else { return }
+            total = totalPosts
+            print("total posts: ", total)
+            
             profileImageView.loadImage(urlString: profileImageUrl)
             usernameLabel.text = user?.username
+            
+            updateTotalPostsFollowersFollowing()
+            
             setupEditFollowButton()
         }
+    }
+    
+    func updateTotalPostsFollowersFollowing(){
+        let attributedText = NSMutableAttributedString(string: "\(total)\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
+        postsLabel.attributedText = attributedText
     }
     
     fileprivate func setupEditFollowButton(){
@@ -62,7 +84,7 @@ class UserProfileHeader: UICollectionViewCell {
                 print("Successfully unfollowed user:", self.user?.username ?? "")
                 
                 self.setupFollowStyle()
-        
+                
             }
         }else {
             
@@ -97,18 +119,33 @@ class UserProfileHeader: UICollectionViewCell {
         return iv
     }()
     
-    let gridButton: UIButton = {
+    lazy var gridButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "grid"), for: .normal)
+        button.addTarget(self, action: #selector(handleChangeToGridView), for: .touchUpInside)
         return button
     }()
     
-    let listButton: UIButton = {
+    @objc func handleChangeToGridView(){
+        gridButton.tintColor = .mainBlue()
+        listButton.tintColor = UIColor(white: 0, alpha: 0.2)
+        delegate?.didChangeToGridView()
+    }
+    
+    lazy var listButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(#imageLiteral(resourceName: "list"), for: .normal)
         button.tintColor = UIColor(white: 0, alpha: 0.2)
+        button.addTarget(self, action: #selector(handleChangeToListView), for: .touchUpInside)
         return button
     }()
+    
+    @objc func handleChangeToListView(){
+        print("Changing to list view")
+        listButton.tintColor = .mainBlue()
+        gridButton.tintColor = UIColor(white: 0, alpha: 0.2)
+        delegate?.didChangeToListView()
+    }
     
     let bookmarkButton: UIButton = {
         let button = UIButton(type: .system)
@@ -124,19 +161,17 @@ class UserProfileHeader: UICollectionViewCell {
         return label
     }()
     
-    let postsLabel: UILabel = {
+    lazy var postsLabel: UILabel = {
         let label = UILabel()
-        let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
-        label.attributedText = attributedText
+        
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
     }()
     
-    let followersLabel: UILabel = {
+    lazy var followersLabel: UILabel = {
         let label = UILabel()
-        let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        let attributedText = NSMutableAttributedString(string: "\(total)\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
         label.attributedText = attributedText
         label.numberOfLines = 0
@@ -184,7 +219,6 @@ class UserProfileHeader: UICollectionViewCell {
     }
     
     fileprivate func setupBottomToolbar(){
-        
         let topDividerView = UIView()
         topDividerView.backgroundColor = UIColor.lightGray
         
