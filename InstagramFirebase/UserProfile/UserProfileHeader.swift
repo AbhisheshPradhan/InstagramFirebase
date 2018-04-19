@@ -19,14 +19,13 @@ protocol UserProfileHeaderDelegate {
 class UserProfileHeader: UICollectionViewCell {
     
     var delegate: UserProfileHeaderDelegate?
-    var total: Int = 0
+    var total: Int?
     var user: User? {
         didSet {
             guard let profileImageUrl = user?.profileImageUrl else { return }
             
             guard let totalPosts = user?.totalPosts else { return }
             total = totalPosts
-            print("total posts: ", total)
             
             profileImageView.loadImage(urlString: profileImageUrl)
             usernameLabel.text = user?.username
@@ -38,7 +37,9 @@ class UserProfileHeader: UICollectionViewCell {
     }
     
     func updateTotalPostsFollowersFollowing(){
-        let attributedText = NSMutableAttributedString(string: "\(total)\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        guard let finalTotal = total else { return }
+        
+        let attributedText = NSMutableAttributedString(string: "\(finalTotal) \n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
         postsLabel.attributedText = attributedText
     }
@@ -163,7 +164,6 @@ class UserProfileHeader: UICollectionViewCell {
     
     lazy var postsLabel: UILabel = {
         let label = UILabel()
-        
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
@@ -171,7 +171,7 @@ class UserProfileHeader: UICollectionViewCell {
     
     lazy var followersLabel: UILabel = {
         let label = UILabel()
-        let attributedText = NSMutableAttributedString(string: "\(total)\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
         label.attributedText = attributedText
         label.numberOfLines = 0
