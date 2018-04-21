@@ -9,8 +9,6 @@
 import UIKit
 import Firebase
 
-
-
 class CommentsController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CommentInputAccessoryViewDelegate
 {
     
@@ -27,6 +25,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         collectionView?.alwaysBounceVertical = true
         collectionView?.keyboardDismissMode = .interactive
         
+        
         collectionView?.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
         
@@ -35,6 +34,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         fetchComments()
     }
     
+
     var comments = [Comment]()
     fileprivate func fetchComments() {
         guard let postId = self.post?.id else { return }

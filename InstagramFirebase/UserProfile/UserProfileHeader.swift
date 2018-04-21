@@ -15,33 +15,25 @@ protocol UserProfileHeaderDelegate {
     func didChangeToGridView()
 }
 
-
 class UserProfileHeader: UICollectionViewCell {
     
     var delegate: UserProfileHeaderDelegate?
-    var total: Int?
     var user: User? {
         didSet {
             guard let profileImageUrl = user?.profileImageUrl else { return }
             
-            guard let totalPosts = user?.totalPosts else { return }
-            total = totalPosts
+            //    guard let totalPosts = user?.totalPosts else { return }
+            //   total = totalPosts
             
             profileImageView.loadImage(urlString: profileImageUrl)
             usernameLabel.text = user?.username
             
-            updateTotalPostsFollowersFollowing()
+            //    updateTotalPostsFollowersFollowing()
             
             setupEditFollowButton()
+            setupPostsLabel()
+            setupFollowingLabel()
         }
-    }
-    
-    func updateTotalPostsFollowersFollowing(){
-        guard let finalTotal = total else { return }
-        
-        let attributedText = NSMutableAttributedString(string: "\(finalTotal) \n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
-        postsLabel.attributedText = attributedText
     }
     
     fileprivate func setupEditFollowButton(){
@@ -69,6 +61,8 @@ class UserProfileHeader: UICollectionViewCell {
             }
         }
     }
+    
+    
     
     @objc func handleEditProfileOrFollow(){
         guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
@@ -112,8 +106,6 @@ class UserProfileHeader: UICollectionViewCell {
         editProfileFollowButton.setTitleColor(.white, for: .normal)
         editProfileFollowButton.layer.borderColor = UIColor(white: 0, alpha: 0.2).cgColor
     }
-    
-    
     
     let profileImageView: CustomImageView = {
         let iv = CustomImageView()
@@ -166,28 +158,74 @@ class UserProfileHeader: UICollectionViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
+        
         return label
     }()
     
+    func setupPostsLabel(){
+        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let userId = user?.uid else { return }
+        var currentUserPage = ""
+        if currentLoggedInUserId == userId {
+            currentUserPage = currentLoggedInUserId
+        }
+        else {
+            currentUserPage = userId
+        }
+        
+        Database.database().reference().child("posts").child(currentUserPage).observe(.value, with: { (snapshot) in
+            let total = Int(snapshot.childrenCount)
+            let attributedText = NSMutableAttributedString(string: "\(total)\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+            attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
+            
+            self.postsLabel.attributedText = attributedText
+        }) { (err) in
+            print("error counting total posts")
+        }
+        
+    }
+    
     lazy var followersLabel: UILabel = {
         let label = UILabel()
-        let attributedText = NSMutableAttributedString(string: "11\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        
+        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
         label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
+        
         return label
     }()
     
-    let followingLabel: UILabel = {
+    lazy var followingLabel: UILabel = {
         let label = UILabel()
-        let attributedText = NSMutableAttributedString(string: "0\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
-        attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
-        label.attributedText = attributedText
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
     }()
+    
+    func setupFollowingLabel(){
+        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else { return }
+        guard let userId = user?.uid else { return }
+        var currentUserPage = ""
+        if currentLoggedInUserId == userId {
+            currentUserPage = currentLoggedInUserId
+        }
+        else {
+            currentUserPage = userId
+        }
+        
+        Database.database().reference().child("following").child(currentUserPage).observe(.value, with: { (snapshot) in
+            let total = Int(snapshot.childrenCount)
+            let attributedText = NSMutableAttributedString(string: "\(total)\n", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedStringKey.foregroundColor: UIColor.lightGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14)]))
+            
+            self.followingLabel.attributedText = attributedText
+        }) { (err) in
+            print("error counting total posts")
+        }
+        
+    }
     
     //we instantiate this button when we know which user profile we are opening
     lazy var editProfileFollowButton: UIButton = {
@@ -201,8 +239,6 @@ class UserProfileHeader: UICollectionViewCell {
         button.addTarget(self, action: #selector(handleEditProfileOrFollow), for: .touchUpInside)
         return button
     }()
-    
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -242,7 +278,6 @@ class UserProfileHeader: UICollectionViewCell {
         stackView.distribution = .fillEqually
         addSubview(stackView)
         stackView.anchor(top: topAnchor, left: profileImageView.rightAnchor, right: rightAnchor, paddingTop: 12, paddingLeft: 12, paddingRight: 12, height: 50)
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

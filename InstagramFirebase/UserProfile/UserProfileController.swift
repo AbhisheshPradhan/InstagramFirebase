@@ -15,7 +15,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     let homePostCellId = "homePostCellId"
     
     var userId: String?
-    
     var isGridView = true
     
     func didChangeToGridView() {
@@ -140,8 +139,6 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             } catch let signOutErr {
                 print("Failed to sign out:", signOutErr)
             }
-            
-            
         }))
         
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
