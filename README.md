@@ -11,7 +11,7 @@ TODO:
 - bug fixes
 
 What I learned:
-- Developing UI Pragmatically
+- Developing UI Programmatically
 - Implementing Firebase Backend
 - Firebase: Authentication/Database/Storage
 - Standard Social Network UI Structure
